@@ -1,15 +1,23 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-  <head>
-    <meta charset="utf-8">
-    <title>Redirecting…</title>
-    <script>
-      // Redirect to index.html while preserving path after /adsapient-site/
-      var path = location.pathname.replace(/^\/adsapient-site/, '');
-      location.replace('/adsapient-site/' + '#' + path + location.search + location.hash);
-    </script>
-  </head>
-  <body>
-    Redirecting…
-  </body>
+<head>
+  <meta charset="utf-8">
+  <title>Redirecting…</title>
+  <script>
+    (function () {
+      var base = '/adsapient-site';
+      var path = location.pathname.replace(new RegExp('^' + base), '') || '/';
+      fetch(base + '/index.html', {cache: 'no-store'}).then(r => r.text()).then(html => {
+        document.open();
+        document.write(html);
+        document.close();
+        var newUrl = base + (path === '/' ? '' : path) + location.search + location.hash;
+        history.replaceState(null, '', newUrl);
+      }).catch(() => {
+        location.replace(base + '/#' + path + location.search + location.hash);
+      });
+    })();
+  </script>
+</head>
+<body>Redirecting…</body>
 </html>
